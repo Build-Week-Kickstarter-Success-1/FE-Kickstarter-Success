@@ -35,7 +35,7 @@ export default function Form(props) {
 
                     <label for="">Start Date
                         <input 
-                        type="datetime-local"
+                        type="date"
                         id='launch_date'
                         name='launch_date'
                         value={values.launch_date}
@@ -45,7 +45,7 @@ export default function Form(props) {
 
                     <label for="">End Date
                         <input 
-                        type="datetime-local"
+                        type="date"
                         id='finish_date'
                         name='finish_date'
                         value={values.finish_date}

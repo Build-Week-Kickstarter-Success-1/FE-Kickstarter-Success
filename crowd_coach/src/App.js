@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom'
 import Header from './Header'
+import Register from './Register'
 import Login from './Login'
 import Dashboard from './Dashboard'
 import './App.css';
@@ -19,11 +20,22 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <Header/>
       <Router>
+      <Header/>
+
+        <Switch>
         <Route path='/Dashboard'>
           <Dashboard/>
         </Route>
+        <Route path='/Register'>
+          <Register/>
+        </Route>
+        <Route path='/Login'>
+          <Login/>
+        </Route>
+
+        </Switch>
+
         
       </Router>
 
