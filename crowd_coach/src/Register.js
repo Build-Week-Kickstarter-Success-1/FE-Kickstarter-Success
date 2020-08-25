@@ -28,6 +28,7 @@ export default function Login(){
         })
           .catch(err => {
             debugger
+            console.log(err)
           })
           .finally(() => {
             setFormValues(blankLogin)
@@ -84,10 +85,6 @@ export default function Login(){
                 </label>
             </form>    
 
-            <div>
-                <p>Don't have an account yet? </p>
-                <a href="" className="signUp">Sign Up Here</a>
-            </div>
         </div>
     )
 }

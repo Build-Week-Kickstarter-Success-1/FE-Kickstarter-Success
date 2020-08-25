@@ -10,7 +10,7 @@ export default function Capmaigns({details}){
 
     return(
         <div className='campaign container'>
-            <h2>{details.title}</h2>
+            <h4>{details.title}</h4>
             <p>Goal: {details.goal}</p>
             <p>Start Date: {details.startDate}</p>
             <p>End Date: {details.endDate}</p>

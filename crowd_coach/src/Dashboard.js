@@ -15,7 +15,7 @@ const blankForm = {
 
 const initialCampaigns = []
 
-const id = ''
+const userId = ''
 
 function Dashboard({ details }) {
     const [campaigns, setCampaigns] = useState(initialCampaigns)
@@ -23,7 +23,7 @@ function Dashboard({ details }) {
 
 
     const getCampaigns = (id) => {
-        axios.get('https://be-lambda-kickstarter-success.herokuapp.com/api/campaigns/:id')
+        axios.get(`https://be-lambda-kickstarter-success.herokuapp.com/api/campaigns/${id}`)
           .then(res => {
             setCampaigns(res.data)
           })
@@ -75,7 +75,7 @@ function Dashboard({ details }) {
       }
 
       useEffect(() => {
-          getCampaigns(id)
+          getCampaigns(userId)
       },[])
 
 
@@ -90,13 +90,18 @@ function Dashboard({ details }) {
             // errors={formErrors}
         />
 
-        {
-            campaigns.map(campaign => {
-            return (
-                <Campaigns key={campaign.id} details={campaign} />
-            )
-            })
-        }
+        <div className='campaigns'>
+            <h2>Your Capmaigns</h2>
+            {
+                campaigns.map(campaign => {
+                return (
+                    <Campaigns key={campaign.id} details={campaign} />
+                )
+                })
+            }
+        </div>
+
+       
 
     </div>
 
