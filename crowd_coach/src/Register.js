@@ -41,8 +41,8 @@ export default function Login(){
 
       const submit = () => {
         const newLogin = {
-          size: formValues.username.trim(),
-          sauce: formValues.password.trim(),
+          username: formValues.username.trim(),
+          password: formValues.password.trim(),
         }
         postOrder(newLogin)
       }

@@ -22,9 +22,9 @@ export default function Login(){
         })
     }
 
-    const postOrder = login => {
+    const postLogin = login => {
 
-        axios.post('https://reqres.in/api/users', login)
+        axios.post('https://be-lambda-kickstarter-success.herokuapp.com/auth/login', login)
           .then(res => {
             console.log(login)
         })
@@ -43,15 +43,15 @@ export default function Login(){
 
       const submit = () => {
         const newLogin = {
-          size: formValues.username.trim(),
-          sauce: formValues.password.trim(),
+          username: formValues.username.trim(),
+          password: formValues.password.trim(),
         }
-        postOrder(newLogin)
+        postLogin(newLogin)
       }
 
 
     return(
-        <div className="form">
+        <Router className="form">
 
             <h2>Sign In</h2>
             <form action=""
@@ -93,13 +93,13 @@ export default function Login(){
 
             <Switch>
             <Route path="/Register">
-                <Register />
+                <Register/>
             </Route>
             {/* <Route path="/">
                 <App />
             </Route> */}
             </Switch>
 
-        </div>
+        </Router>
     )
 }

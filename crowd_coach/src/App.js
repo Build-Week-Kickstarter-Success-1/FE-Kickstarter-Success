@@ -17,14 +17,19 @@ import './App.css';
 
 function App() {
   return (
-    <Router className="App">
+    <div className="App">
       <Header/>
-
+      <Router>
+        <Route path='/Login'>
+          <Login/>
+        </Route>
+        
+      </Router>
       <Login/>      
 
 
 
-    </Router>
+    </div>
   );
 }
 
