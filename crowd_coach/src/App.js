@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom'
-import Header from './Header'
-import Register from './Register'
-import Login from './Login'
-import Dashboard from './Dashboard'
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
+import Header from './Header';
+import Register from './Register';
+import Login from './Login';
+import Dashboard from './Dashboard';
+import { CampaignProvider } from './contexts/CampaignContext';
 import './App.css';
 
-//Step 1 Build the UI to have the basic options that you need according to the 
+//Step 1 Build the UI to have the basic options that you need according to the
 //Step 2 Set up the states
 //Step 3 set up the functions and useEffects to change the states
 //Step 4 pass them to the form.js component via props
@@ -16,31 +17,26 @@ import './App.css';
 //Step 8 Build out the validation with yup
 //Step 9 Build out the testing with cypress
 
-
 function App() {
   return (
-    <div className="App">
+    <div className='App'>
       <Router>
-      <Header/>
+        <CampaignProvider>
+          <Header />
 
-        <Switch>
-        <Route path='/Dashboard'>
-          <Dashboard/>
-        </Route>
-        <Route path='/Register'>
-          <Register/>
-        </Route>
-        <Route path='/Login'>
-          <Login/>
-        </Route>
-
-        </Switch>
-
-        
+          <Switch>
+            <Route path='/Dashboard'>
+              <Dashboard />
+            </Route>
+            <Route path='/Register'>
+              <Register />
+            </Route>
+            <Route path='/Login'>
+              <Login />
+            </Route>
+          </Switch>
+        </CampaignProvider>
       </Router>
-
-
-
     </div>
   );
 }
