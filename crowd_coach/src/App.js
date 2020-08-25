@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom'
 import Header from './Header'
 import Login from './Login'
+import Dashboard from './Dashboard'
 import './App.css';
 
 //Step 1 Build the UI to have the basic options that you need according to the 
@@ -20,12 +21,11 @@ function App() {
     <div className="App">
       <Header/>
       <Router>
-        <Route path='/Login'>
-          <Login/>
+        <Route path='/Dashboard'>
+          <Dashboard/>
         </Route>
         
       </Router>
-      <Login/>      
 
 
 

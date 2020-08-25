@@ -1,61 +1,9 @@
-import React, {useState, useEffect} from 'react'
-import axios from 'axios'
-
-// const blankForm = {
-//     title:'',
-//     monetarty_goal:'',
-//     launch_date:'',
-//     finish_date:'',
-//     category:'',
-//     description:''
-// }
+import React from 'react'
 
 
-export default function Dashboard() {
-    const [formValues,setFormValues] = useState(blankForm)
 
-    const formChange = (evt) =>{
-
-        const {name,value} = evt.target
-
-        setFormValues({
-            ...formValues,
-            [name]:value
-        })
-    }
-
-    const postCampaign = campaign => {
-
-        axios.post('https://reqres.in/api/users', campaign)
-          .then(res => {
-            console.log(campaign)
-        })
-          .catch(err => {
-            debugger
-          })
-          .finally(() => {
-            setFormValues(blankForm)
-          })
-      }
-
-      const onSubmit = (evt) =>{
-          evt.preventDefault()
-          submit()
-      }
-
-      const submit = () => {
-        const newCampaign = {
-          title:formValues.name.trim(),
-          monetarty_goal: formValues.monetarty_goal.trim(),
-          launch_date: formValues.launch_date.trim(),
-          finish_date: formValues.finish_date.trim(),
-          category: formValues.category.trim(),
-          description: formValues.description.trim(),
-        }
-        postCampaign(newCampaign)
-      }
-
-
+export default function Form(props) {
+    const {values,inputChange,submit} = props
 
     return(
         <section className="form">
@@ -65,14 +13,14 @@ export default function Dashboard() {
             </div>
             <div className="form">
                 <form action=""
-                onSubmit={onSubmit}>
+                onSubmit={submit}>
                     <label for="">Campaign Titile
                         <input 
                         type="text"
                         id='title'
                         name='title'
-                        value={formValues.title}
-                        onChange={formChange}
+                        value={values.title}
+                        onChange={inputChange}
                         />
                     </label>
                     <label for="">Campaign Goal
@@ -80,8 +28,8 @@ export default function Dashboard() {
                         type="number"
                         id='monetarty_goal'
                         name='monetarty_goal'
-                        value={formValues.monetarty_goal}
-                        onChange={formChange}
+                        value={values.monetarty_goal}
+                        onChange={inputChange}
                         />
                     </label>
 
@@ -90,8 +38,8 @@ export default function Dashboard() {
                         type="datetime-local"
                         id='launch_date'
                         name='launch_date'
-                        value={formValues.launch_date}
-                        onChange={formChange}
+                        value={values.launch_date}
+                        onChange={inputChange}
                         />
                     </label>
 
@@ -100,8 +48,8 @@ export default function Dashboard() {
                         type="datetime-local"
                         id='finish_date'
                         name='finish_date'
-                        value={formValues.finish_date}
-                        onChange={formChange}
+                        value={values.finish_date}
+                        onChange={inputChange}
                         />
                     </label>
 
@@ -110,8 +58,8 @@ export default function Dashboard() {
                         type="text"
                         id='category'
                         name='category'
-                        value={formValues.category}
-                        onChange={formChange}
+                        value={values.category}
+                        onChange={inputChange}
                         />
                     </label>
                     <label for="">Description
@@ -119,8 +67,8 @@ export default function Dashboard() {
                         type="text"
                         id='description'
                         name='description'
-                        value={formValues.description}
-                        onChange={formChange}
+                        value={values.description}
+                        onChange={inputChange}
                         />
                     </label>
 

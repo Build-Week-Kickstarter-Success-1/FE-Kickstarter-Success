@@ -15,7 +15,9 @@ const blankForm = {
 
 const initialCampaigns = []
 
-function Campaign({ details }) {
+const id = ''
+
+function Dashboard({ details }) {
     const [campaigns, setCampaigns] = useState(initialCampaigns)
     const [formValues,setFormValues] = useState(blankForm)
 
@@ -43,7 +45,7 @@ function Campaign({ details }) {
 
     const postCampaign = campaign => {
 
-        axios.post('https://reqres.in/api/users', campaign)
+        axios.post('https://be-lambda-kickstarter-success.herokuapp.com/api/', campaign)
           .then(res => {
             console.log(campaign)
         })
@@ -72,10 +74,10 @@ function Campaign({ details }) {
         postCampaign(newCampaign)
       }
 
+      useEffect(() => {
+          getCampaigns(id)
+      },[])
 
-  if (!details) {
-    return <h3>Working fetching your campaign&apos;s details...</h3>
-  }
 
   return (
     <div className='container'>
@@ -83,7 +85,7 @@ function Campaign({ details }) {
         <Form
             values={formValues}
             inputChange={formChange}
-            submit={submit}
+            submit={onSubmit}
             // disabled={disabled}
             // errors={formErrors}
         />
@@ -103,4 +105,4 @@ function Campaign({ details }) {
   )
 }
 
-export default Campaign
+export default Dashboard
