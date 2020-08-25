@@ -24,7 +24,7 @@ export default function Login(){
 
     const postLogin = login => {
 
-        axios.post('https://be-lambda-kickstarter-success.herokuapp.com/auth/login', login)
+        axios.post('https://be-lambda-kickstarter-success.herokuapp.com/api/auth/login', login)
           .then(res => {
             console.log(login)
         })

@@ -22,7 +22,7 @@ export default function Login(){
 
     const postOrder = register => {
 
-        axios.post('https://be-lambda-kickstarter-success.herokuapp.com/auth/register', register)
+        axios.post('https://be-lambda-kickstarter-success.herokuapp.com/api/auth/register', register)
           .then(res => {
             console.log(register)
         })
