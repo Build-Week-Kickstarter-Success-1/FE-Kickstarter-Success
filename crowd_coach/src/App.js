@@ -5,6 +5,7 @@ import Register from './Register';
 import Login from './Login';
 import Dashboard from './Dashboard';
 import { CampaignProvider } from './contexts/CampaignContext';
+import PrivateRoute from './PrivateRoute';
 import './App.css';
 
 //Step 1 Build the UI to have the basic options that you need according to the
@@ -25,9 +26,7 @@ function App() {
           <Header />
 
           <Switch>
-            <Route path='/Dashboard'>
-              <Dashboard />
-            </Route>
+            <PrivateRoute path='/Dashboard' component={Dashboard} />
             <Route path='/Register'>
               <Register />
             </Route>

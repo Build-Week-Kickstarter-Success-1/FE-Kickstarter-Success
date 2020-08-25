@@ -19,18 +19,18 @@ function Dashboard() {
   const [campaigns, setCampaigns] = useContext(CampaignContext);
   const [formValues, setFormValues] = useState(blankForm);
 
-  const getCampaigns = (id) => {
-    axios
-      .get(
-        `https://be-lambda-kickstarter-success.herokuapp.com/api/campaigns/${id}`
-      )
-      .then((res) => {
-        setCampaigns(res.data);
-      })
-      .catch((err) => {
-        debugger;
-      });
-  };
+  // const getCampaigns = (id) => {
+  //   axios
+  //     .get(
+  //       `https://be-lambda-kickstarter-success.herokuapp.com/api/campaigns/${id}`
+  //     )
+  //     .then((res) => {
+  //       setCampaigns(res.data);
+  //     })
+  //     .catch((err) => {
+  //       debugger;
+  //     });
+  // };
 
   const formChange = (evt) => {
     const { name, value } = evt.target;
@@ -50,6 +50,9 @@ function Dashboard() {
       })
       .catch((err) => {
         debugger;
+      })
+      .finally(() => {
+        setFormValues(blankForm);
       });
   };
 
@@ -70,9 +73,9 @@ function Dashboard() {
     postCampaign(newCampaign);
   };
 
-  useEffect(() => {
-    getCampaigns(userId);
-  }, []);
+  // useEffect(() => {
+  //   getCampaigns(userId);
+  // }, []);
 
   return (
     <div className='container'>
