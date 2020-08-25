@@ -61,7 +61,7 @@ export default function Login(){
                     type="text" 
                     id="username"
                     name='username'
-                    placeholder='Select a Unique Username'
+                    placeholder='Enter Username'
                     value={formValues.username}
                     onChange={formChange}
                     />

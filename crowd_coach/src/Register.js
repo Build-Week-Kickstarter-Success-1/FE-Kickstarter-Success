@@ -50,6 +50,8 @@ export default function Login(){
 
     return(
         <div className="form">
+
+            <h2>Sign Up</h2>
             <form action=""
             onSubmit={onSubmit}>
                 <label htmlFor="" className="input">Username
@@ -58,6 +60,7 @@ export default function Login(){
                     id="username"
                     name='username'
                     value={formValues.username}
+                    placeholder='Select a Unique Username'
                     onChange={formChange}
                     />
                 </label>
