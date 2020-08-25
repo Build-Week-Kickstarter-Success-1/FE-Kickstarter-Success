@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom'
 import Header from './Header'
 import Login from './Login'
 import './App.css';
@@ -16,14 +17,14 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <Router className="App">
       <Header/>
 
       <Login/>      
 
 
 
-    </div>
+    </Router>
   );
 }
 

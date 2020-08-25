@@ -1,7 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom'
 import axios from 'axios'
-import Register from './Register'
 
 const blankLogin = {
     username:'',
@@ -22,11 +20,11 @@ export default function Login(){
         })
     }
 
-    const postOrder = login => {
+    const postOrder = register => {
 
-        axios.post('https://reqres.in/api/users', login)
+        axios.post('https://be-lambda-kickstarter-success.herokuapp.com/auth/register', register)
           .then(res => {
-            console.log(login)
+            console.log(register)
         })
           .catch(err => {
             debugger
@@ -52,8 +50,6 @@ export default function Login(){
 
     return(
         <div className="form">
-
-            <h2>Sign In</h2>
             <form action=""
             onSubmit={onSubmit}>
                 <label htmlFor="" className="input">Username
@@ -61,7 +57,6 @@ export default function Login(){
                     type="text" 
                     id="username"
                     name='username'
-                    placeholder='Select a Unique Username'
                     value={formValues.username}
                     onChange={formChange}
                     />
@@ -81,25 +76,15 @@ export default function Login(){
                     type='submit'
                     id='submitBtn'
                     name='submitBtn'
-                    value='Login'
+                    value='Register'
                     />
                 </label>
             </form>    
 
             <div>
                 <p>Don't have an account yet? </p>
-                <Link id="registerLink" to='/Register' className="signUp">Sign Up Here</Link>
+                <a href="" className="signUp">Sign Up Here</a>
             </div>
-
-            <Switch>
-            <Route path="/Register">
-                <Register />
-            </Route>
-            {/* <Route path="/">
-                <App />
-            </Route> */}
-            </Switch>
-
         </div>
     )
 }
