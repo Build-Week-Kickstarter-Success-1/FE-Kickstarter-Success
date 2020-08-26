@@ -10,13 +10,39 @@ const blankLogin = {
     password:''
 }
 
+const initialLoginErrors = {
+    username: '',
+    password:'',
+}
+
+const initialDisabled = true
+
 export default function Login(){
     const [formValues,setFormValues] = useState(blankLogin)
+    const [formErrors, setFormErrors] = useState(initialLoginErrors)
+    const [disabled, setDisabled] = useState(initialDisabled)
 
 
     const formChange = (evt) =>{
 
         const {name,value} = evt.target
+
+        yup
+        .reach(loginSchema, name)
+        .validate(value)
+        .then(valid => {
+          setFormErrors({
+            ...formErrors,
+            [name]: ""
+          });
+        })
+        .catch(err => {
+          setFormErrors({
+            ...formErrors,
+            [name]: err.errors[0]
+          });
+        })
+        
 
         setFormValues({
             ...formValues,
@@ -51,11 +77,24 @@ export default function Login(){
         postLogin(newLogin)
       }
 
+      useEffect(() => {
+        loginSchema.isValid(formValues)
+          .then(valid => {
+            setDisabled(!valid)
+            console.log('Looks Good')
+          })
+      }, [formValues])
+
 
     return(
         <Router className="form">
 
             <h2>Sign In</h2>
+            
+            <div className='errors'>
+                    <div>{formErrors.username}</div>
+                    <div>{formErrors.password}</div>
+                </div>
             <form action=""
             onSubmit={onSubmit}>
                 <label htmlFor="" className="input">Username
@@ -84,6 +123,7 @@ export default function Login(){
                     id='submitBtn'
                     name='submitBtn'
                     value='Login'
+                    disabled={disabled}
                     />
                 </label>
             </form>    
