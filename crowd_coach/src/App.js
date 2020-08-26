@@ -5,6 +5,7 @@ import Register from './Register'
 import Login from './Login'
 import Dashboard from './Dashboard'
 import './App.css';
+import styled from 'styled-components'
 
 //Step 1 Build the UI to have the basic options that you need according to the 
 //Step 2 Set up the states

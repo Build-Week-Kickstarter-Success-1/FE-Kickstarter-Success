@@ -17,6 +17,9 @@ export default function Capmaigns({details}){
             <p>Category: {details.category}</p>
             <p>Description: {details.description}</p>
             <p>Result: {details.review}</p>
+
+            <button>Edit</button>
+            <button>Delete</button>
         
         </div>
     )
