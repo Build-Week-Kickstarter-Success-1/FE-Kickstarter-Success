@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react'
 import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom'
 import axios from 'axios'
 import Register from './Register'
+import * as yup from 'yup'
+import loginSchema from './valdation/loginSchema'
 
 const blankLogin = {
     username:'',

@@ -3,13 +3,22 @@ import React from 'react'
 
 
 export default function Form(props) {
-    const {values,inputChange,submit} = props
+    const {values,inputChange,submit,disabled,errors} = props
 
     return(
         <section className="form">
             <div className="title">
                 <h1 className="title">New Campaign</h1>
                 <h3 className="subtitle">Enter The Campaign Info</h3>
+
+                <div className='errors'>
+                    <div>{errors.title}</div>
+                    <div>{errors.monetary_goal}</div>
+                    <div>{errors.launch_date}</div>
+                    <div>{errors.finish_date}</div>
+                    <div>{errors.category}</div>
+                    <div>{errors.description}</div>
+                </div>
             </div>
             <div className="form">
                 <form action=""
@@ -26,9 +35,9 @@ export default function Form(props) {
                     <label for="">Campaign Goal
                         <input 
                         type="number"
-                        id='monetarty_goal'
-                        name='monetarty_goal'
-                        value={values.monetarty_goal}
+                        id='monetary_goal'
+                        name='monetary_goal'
+                        value={values.monetary_goal}
                         onChange={inputChange}
                         />
                     </label>
@@ -79,6 +88,7 @@ export default function Form(props) {
                         id='submitBtn'
                         name='submitBtn'
                         value='Submit Campaign'
+                        disabled={disabled}
                         />
                     </label>
                 </form>
