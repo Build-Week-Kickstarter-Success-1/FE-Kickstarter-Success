@@ -4,10 +4,10 @@ const formSchema = yup.object().shape({
   
   title: yup
     .string()
-    .min(2, 'Must be longer than 2 characters')
-    .required('Must be longer than 2 characters'),
+    .min(2, 'Title must be longer than 2 characters')
+    .required('Title must be longer than 2 characters'),
   monetary_goal: yup
-    .number()
+    .number('Must be a valid number')
     .required("Must have a valid monetary goal"),
   launch_date: yup
     .string()

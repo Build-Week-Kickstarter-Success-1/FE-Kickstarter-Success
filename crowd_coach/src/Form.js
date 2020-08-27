@@ -8,8 +8,8 @@ export default function Form(props) {
     return(
         <section className="form">
             <div className="title">
-                <h1 className="title">New Campaign</h1>
-                <h3 className="subtitle">Enter The Campaign Info</h3>
+                <h2 className="title">New Campaign</h2>
+                <h4 className="subtitle">Enter The Campaign Info</h4>
 
                 <div className='errors'>
                     <div>{errors.title}</div>
@@ -23,7 +23,7 @@ export default function Form(props) {
             <div className="form">
                 <form action=""
                 onSubmit={submit}>
-                    <label for="">Campaign Titile
+                    <label for="">Campaign Title
                         <input 
                         type="text"
                         id='title'

@@ -99,25 +99,31 @@ export default function Login(){
                 </div>
             <form action=""
             onSubmit={onSubmit}>
-                <label htmlFor="" className="input">Username
-                    <input 
-                    type="text" 
-                    id="username"
-                    name='username'
-                    value={formValues.username}
-                    placeholder='Select a Unique Username'
-                    onChange={formChange}
-                    />
-                </label>
-                <label htmlFor="" className="password">Password
+              <div className='inputBox'>
+                <label htmlFor="username" className="input">Username:                </label>
+                      <input 
+                      type="text" 
+                      id="username"
+                      name='username'
+                      value={formValues.username}
+                      placeholder='Enter Username'
+                      onChange={formChange}
+                      />
+                
+              </div>
+              <div className='inputBox'>
+
+                <label htmlFor="password" className="password">Password:                </label>
+
                     <input 
                     type="password" 
                     id="password"
                     name='password'
                     value={formValues.password}
+                    placeholder='Enter Password'
                     onChange={formChange}
                     />
-                </label>
+                </div>
                 <label className='submit'>
                     <input
                     onClick={submit}
