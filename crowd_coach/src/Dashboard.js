@@ -6,7 +6,7 @@ import { CampaignContext } from './contexts/CampaignContext'
 import jwt_decode from 'jwt-decode'
 
 const token = localStorage.getItem('token')
-const userId = jwt_decode(token).subject
+const userId = token ? jwt_decode(token).subject : null
 
 const blankForm = {
   user_id: userId,
@@ -23,7 +23,12 @@ const blankForm = {
 function Dashboard() {
   const [campaigns, setCampaigns] = useContext(CampaignContext);
   const [formValues, setFormValues] = useState(blankForm);
-  
+  const [edit, setEdit] = useState(blankForm)
+  const [editing, setEditing] = useState(false)
+
+  useEffect(() => {
+    getCampaigns();
+  }, [])
 
   const getCampaigns = (id) => {
     axiosWithAuth()
@@ -40,7 +45,10 @@ function Dashboard() {
 
   const formChange = (evt) => {
     const { name, value } = evt.target;
-
+    editing ? setEdit({
+      ...edit,
+      [name]: value
+    }): 
     setFormValues({
       ...formValues,
       [name]: value
@@ -62,6 +70,39 @@ function Dashboard() {
       });
   };
 
+  const editCampaign = (campaign) => {
+    setEditing(true)
+    setEdit(campaign)
+  }
+
+  const saveEdit = (e) => {
+    e.preventDefault()
+    axiosWithAuth()
+    .put(`/api/campaigns/${edit.id}`, edit)
+    .then((res) => {
+      setCampaigns(campaigns.map(campaign => {
+        if(campaign.id === res.data['data'].id){
+          return(res.data['data'])
+        }
+        else{
+          return campaign
+        }
+      }))
+    })
+  }
+
+  const deleteCampaign = (notCampaigns) => {
+    console.log(campaigns)
+    axiosWithAuth()
+        .delete(`/api/campaigns/${notCampaigns.id}`)
+        .then((res) => {
+          setCampaigns(campaigns.filter((item) => 
+            notCampaigns.id !== item.id
+            ))
+        })
+        .catch((err) => console.log(err));
+  }
+
   const onSubmit = (evt) => {
     evt.preventDefault();
     submit();
@@ -80,13 +121,12 @@ function Dashboard() {
     postCampaign(newCampaign);
   };
 
-  useEffect(() => {
-    getCampaigns();
-  }, []);
-
   return (
     <div className='container'>
       <Form
+        edit={edit}
+        editing={editing}
+        saveEdit={saveEdit}
         values={formValues}
         inputChange={formChange}
         submit={onSubmit}
@@ -97,11 +137,12 @@ function Dashboard() {
       <div className='campaigns'>
         <h2>Your Campaigns</h2>
         {campaigns.map((campaign) => {
-          return <Campaigns key={campaign.id} details={campaign} inputChange={formChange} />;
+          return <Campaigns key={campaign.id} details={campaign} editCampaign={editCampaign} deleteCampaign={deleteCampaign}/>;
         })}
       </div>
     </div>
   );
 }
 
-export default Dashboard;
+
+export default Dashboard
