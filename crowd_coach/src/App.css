@@ -1,11 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400&family=Lexend+Zetta&family=Sunflower:wght@300;500&family=Titan+One&display=swap");
+
 .App {
   text-align: center;
 }
 
 * {
-  border: 1px dotted grey;
-
+  font-family: 'Lato', sans-serif;
 }
+
+
 
 .App-logo {
   height: 40vmin;
@@ -41,3 +44,22 @@
     transform: rotate(360deg);
   }
 }
+
+
+  h2{
+    padding:2%;
+  }
+
+  label{
+    display:flex;
+    flex-flow: row;
+    justify-content: space-between;
+  }
+
+  form{
+    padding: 2%;
+    display:flex;
+    flex-flow: column;
+    border-top:1px solid #081C15;
+    border-bottom:1px solid #081C15;
+  }

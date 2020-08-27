@@ -19,7 +19,7 @@ const formSchema = yup.object().shape({
     .required('Must have an end date'),
   category: yup
     .string()
-    .max(50, 'You can only use 50 characters'),
+    .oneOf(['Hardware',	'Plays',	'Gadgets',	'Musical',	'Software',	'Festivals',	'Apps',	'Wearables',	'Web',	'Sound',	'Robots',	'Experimental',	'Other'], 'You must select a Category'),
     
   description: yup
     .string()
