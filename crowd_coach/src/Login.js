@@ -95,34 +95,40 @@ export default function Login(){
                     <div>{formErrors.username}</div>
                     <div>{formErrors.password}</div>
                 </div>
-            <form action=""
+                <form action=""
             onSubmit={onSubmit}>
-                <label htmlFor="" className="input">Username
-                    <input 
-                    type="text" 
-                    id="username"
-                    name='username'
-                    placeholder='Enter Username'
-                    value={formValues.username}
-                    onChange={formChange}
-                    />
-                </label>
-                <label htmlFor="" className="password">Password
+              <div className='inputBox'>
+                <label htmlFor="username" className="input">Username:                </label>
+                      <input 
+                      type="text" 
+                      id="username"
+                      name='username'
+                      value={formValues.username}
+                      placeholder='Enter Username'
+                      onChange={formChange}
+                      />
+                
+              </div>
+              <div className='inputBox'>
+
+                <label htmlFor="password" className="password">Password:                </label>
+
                     <input 
                     type="password" 
                     id="password"
                     name='password'
                     value={formValues.password}
+                    placeholder='Enter Password'
                     onChange={formChange}
                     />
-                </label>
+                </div>
                 <label className='submit'>
                     <input
                     onClick={submit}
                     type='submit'
                     id='submitBtn'
                     name='submitBtn'
-                    value='Login'
+                    value='Register'
                     disabled={disabled}
                     />
                 </label>

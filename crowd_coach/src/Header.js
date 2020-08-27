@@ -51,9 +51,9 @@ export default function Header(){
                     <h2 className="logo">Kickstarter Coach</h2>
                 </div>
                 <div className='navlinks'>
-                    <Link className="navBtn" to='/Dashboard'>Home</Link>
-                    <Link className="navBtn" to='/Register'>Sign Up</Link>
-                    <Link className="navBtn" to='/Login'>Login</Link>
+                    <Link className="navBtn" id='dashboardBtn' to='/Dashboard'>Home</Link>
+                    <Link className="navBtn" id='registerBtn' to='/Register'>Sign Up</Link>
+                    <Link className="navBtn" id='loginBtn' to='/Login'>Login</Link>
                 </div>
             </nav>
             {/* <div>
