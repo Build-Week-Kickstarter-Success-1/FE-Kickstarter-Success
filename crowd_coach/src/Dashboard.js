@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import Form from './Form';
-import Campaigns from './Campaigns';
-import { CampaignContext } from './contexts/CampaignContext';
+import React, { useState, useEffect, useContext } from 'react'
+import {axiosWithAuth} from './utils/axiosWithAuth'
+import Form from './Form'
+import Campaigns from './Campaigns'
+import { CampaignContext } from './contexts/CampaignContext'
+import jwt_decode from 'jwt-decode'
+
+const token = localStorage.getItem('token')
+const userId = jwt_decode(token).subject
 
 const blankForm = {
+  user_id: userId,
   title: '',
   monetary_goal: '',
   launch_date: '',
   finish_date: '',
   category: '',
   description: ''
-};
-
-const userId = '';
+}
 
 
 
@@ -23,12 +26,12 @@ function Dashboard() {
   
 
   const getCampaigns = (id) => {
-    axios
+    axiosWithAuth()
       .get(
-        `https://be-lambda-kickstarter-success.herokuapp.com/api/campaigns/${id}`
+        `/api/campaigns/`
       )
       .then((res) => {
-        setCampaigns(res.data);
+        setCampaigns(res.data['data']);
       })
       .catch((err) => {
         debugger;
@@ -45,8 +48,8 @@ function Dashboard() {
   };
 
   const postCampaign = (campaign) => {
-    axios
-      .post('https://reqres.in/api/users', campaign)
+    axiosWithAuth()
+      .post('/api/campaigns', campaign)
       .then((res) => {
         console.log(campaign);
         setCampaigns([...campaigns, formValues]);
@@ -66,6 +69,7 @@ function Dashboard() {
 
   const submit = () => {
     const newCampaign = {
+      user_id: userId,
       title: formValues.title.trim(),
       monetary_goal: formValues.monetary_goal.trim(),
       launch_date: formValues.launch_date.trim(),
@@ -76,9 +80,9 @@ function Dashboard() {
     postCampaign(newCampaign);
   };
 
-  // useEffect(() => {
-  //   getCampaigns(userId);
-  // }, []);
+  useEffect(() => {
+    getCampaigns();
+  }, []);
 
   return (
     <div className='container'>
@@ -93,7 +97,7 @@ function Dashboard() {
       <div className='campaigns'>
         <h2>Your Campaigns</h2>
         {campaigns.map((campaign) => {
-          return <Campaigns key={campaign.id} details={campaign} />;
+          return <Campaigns key={campaign.id} details={campaign} inputChange={formChange} />;
         })}
       </div>
     </div>

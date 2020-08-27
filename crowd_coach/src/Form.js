@@ -56,13 +56,27 @@ export default function Form(props) {
 
           <label for=''>
             Category
-            <input
-              type='text'
-              id='category'
-              name='category'
-              value={values.category}
-              onChange={inputChange}
-            />
+            <select 
+                        id='category'
+                        name='category'
+                        value={values.category}
+                        onChange={inputChange}
+                        >
+                            <option value=''>Select a Category</option>
+                            <option value='Hardware'>Hardware</option>
+                            <option value='Plays'>Plays</option>
+                            <option value='Gadgets'>Gadgets</option>
+                            <option value='Musical'>Musical</option>
+                            <option value='Software'>Software</option>
+                            <option value='Festivals'>Festivals</option>
+                            <option value='Apps'>Apps</option>
+                            <option value='Wearables'>Wearables</option>
+                            <option value='Web'>Web</option>
+                            <option value='Sound'>Sound</option>
+                            <option value='Robots'>Robots</option>
+                            <option value='Experimental'>Experimental</option>
+                            <option value='Other'>Other</option>
+                        </select>
           </label>
           <label for=''>
             Description
@@ -77,7 +91,6 @@ export default function Form(props) {
 
           <label className='submit'>
             <input
-              onClick={submit}
               type='submit'
               id='submitBtn'
               name='submitBtn'
