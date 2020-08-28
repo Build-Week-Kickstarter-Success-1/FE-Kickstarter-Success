@@ -1,13 +1,22 @@
 import React from 'react';
 
 export default function Form(props) {
-  const { values, inputChange, submit, edit, editing, saveEdit} = props;
+
+  const { values, inputChange, submit, edit, editing, saveEdit,errors} = props;
 
   return (
     <section className='form'>
       <div className='title'>
        <h1 className='title'>{editing ? 'Edit Campaign' : 'New Campaign'}</h1>
         <h3 className='subtitle'>Enter The Campaign Info</h3>
+         <div className='errors'>
+                    <div>{errors.title}</div>
+                    <div>{errors.monetary_goal}</div>
+                    <div>{errors.launch_date}</div>
+                    <div>{errors.finish_date}</div>
+                    <div>{errors.category}</div>
+                    <div>{errors.description}</div>
+        </div>
       </div>
       <div className='form'>
         <form action='' onSubmit={editing ? saveEdit : submit}>
@@ -31,7 +40,6 @@ export default function Form(props) {
               onChange={inputChange}
             />
           </label>
-
           <label for=''>
             Start Date
             <input
@@ -53,15 +61,13 @@ export default function Form(props) {
               onChange={inputChange}
             />
           </label>
-
           <label for=''>
             Category
             <select 
                         id='category'
                         name='category'
-                        value={editing ? edit.category : values.category}
-                        onChange={inputChange}
-                        >
+                        value={editing ? edit.category : values.category} 
+                         onChange={inputChange}>                        
                             <option value=''>Select a Category</option>
                             <option value='Hardware'>Hardware</option>
                             <option value='Plays'>Plays</option>
@@ -77,8 +83,8 @@ export default function Form(props) {
                             <option value='Experimental'>Experimental</option>
                             <option value='Other'>Other</option>
                         </select>
-          </label>
-          <label for=''>
+                    </label>
+                      <label for=''>
             Description
             <input
               type='text'
@@ -88,7 +94,7 @@ export default function Form(props) {
               onChange={inputChange}
             />
           </label>
-
+         
           <label className='submit'>
             <input
               type='submit'
@@ -102,3 +108,4 @@ export default function Form(props) {
     </section>
   );
 }
+

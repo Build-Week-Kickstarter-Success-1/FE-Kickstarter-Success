@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react'
 import {axiosWithAuth} from './utils/axiosWithAuth'
 import Form from './Form'
 import Campaigns from './Campaigns'
+import * as yup from 'yup'
+import formSchema from './valdation/formSchema'
 import { CampaignContext } from './contexts/CampaignContext'
 import jwt_decode from 'jwt-decode'
 
@@ -18,11 +20,20 @@ const blankForm = {
   description: ''
 }
 
-
+const initialFormErrors = {
+    title: '',
+    monetary_goal:'',
+    launch_date:'',
+    finish_date:'',
+    category:'',
+    description:''
+}
 
 function Dashboard() {
   const [campaigns, setCampaigns] = useContext(CampaignContext);
   const [formValues, setFormValues] = useState(blankForm);
+  const [formErrors, setFormErrors] = useState(initialFormErrors) 
+  const [disabled, setDisabled] = useState(initialDisabled)  
   const [edit, setEdit] = useState(blankForm)
   const [editing, setEditing] = useState(false)
 
@@ -45,6 +56,23 @@ function Dashboard() {
 
   const formChange = (evt) => {
     const { name, value } = evt.target;
+    
+        yup
+        .reach(formSchema, name)
+        .validate(value)
+        .then(valid => {
+          setFormErrors({
+            ...formErrors,
+            [name]: ""
+          });
+        })
+        .catch(err => {
+          setFormErrors({
+            ...formErrors,
+            [name]: err.errors[0]
+          });
+        })
+          
     editing ? setEdit({
       ...edit,
       [name]: value
@@ -54,6 +82,14 @@ function Dashboard() {
       [name]: value
     });
   };
+  
+  useEffect(() => {
+      formSchema.isValid(formValues)
+        .then(valid => {
+          setDisabled(!valid)
+          console.log('Looks Good')
+        })
+    }, [formValues])
 
   const postCampaign = (campaign) => {
     axiosWithAuth()
@@ -131,7 +167,7 @@ function Dashboard() {
         inputChange={formChange}
         submit={onSubmit}
         // disabled={disabled}
-        // errors={formErrors}
+        errors={formErrors}
       />
 
       <div className='campaigns'>

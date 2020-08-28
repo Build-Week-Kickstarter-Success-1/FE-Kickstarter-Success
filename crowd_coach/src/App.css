@@ -1,10 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400&family=Lexend+Zetta&family=Sunflower:wght@300;500&family=Titan+One&display=swap");
+
 .App {
   text-align: center;
 }
-/* 
+
 * {
-  border: 1px dotted grey;
-} */
+  font-family: 'Lato', sans-serif;
+}
+
+
+
 
 .App-logo {
   height: 40vmin;
@@ -40,3 +45,56 @@
     transform: rotate(360deg);
   }
 }
+
+
+  h2{
+    padding:2%;
+    font-size:5rem;
+  }
+
+  form label{
+    display:flex;
+    flex-flow: row;
+    justify-content: space-between;
+    /* border-bottom:1px solid grey; */
+    width:60%;
+    margin: 0 auto;
+    margin-bottom: 0%;
+    padding-bottom:0%;
+    color:grey;
+    font-size:.8rem;
+    text-transform:uppercase;
+    align-items: flex-start;
+  }
+
+  input, select{
+    /* border:1px solid grey; */
+    border:none;
+    width:70%;
+  }
+
+  ::placeholder{
+    text-transform: uppercase;
+    font-size:.8rem;
+  }
+
+  form{
+    padding: 2%;
+    display:flex;
+    flex-flow: column;
+    border-top:1px solid #081C15;
+    border-bottom:1px solid #081C15;
+    widows: 65%;
+    margin: 2% auto;
+  }
+  .inputBox{
+    border-bottom:1px solid grey;
+    display:flex;
+    justify-content:space-between;
+  }
+
+  #submitBtn{
+    margin:5%;
+    padding-top:2%;
+    padding-bottom:2%;
+  }
