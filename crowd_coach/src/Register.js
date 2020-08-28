@@ -1,72 +1,131 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { axiosWithAuth } from './utils/axiosWithAuth';
-import { useHistory } from 'react-router-dom';
-import * as yup from 'yup'
-import loginSchema from './valdation/loginSchema'
+import Form from './Form';
+import Campaigns from './Campaigns';
+import * as yup from 'yup';
+import formSchema from './valdation/formSchema';
+import { CampaignContext } from './contexts/CampaignContext';
+import jwt_decode from 'jwt-decode';
 
-const blankLogin = {
-    username:'',
-    password:''
-}
+const token = localStorage.getItem('token');
+const userId = token ? jwt_decode(token).subject : null;
 
-const initialLoginErrors = {
-    username: '',
-    password:'',
-}
+const blankForm = {
+  user_id: userId,
+  title: '',
+  monetary_goal: '',
+  launch_date: '',
+  finish_date: '',
+  category: '',
+  description: ''
+};
 
-const initialDisabled = true
+const initialFormErrors = {
+  title: '',
+  monetary_goal: '',
+  launch_date: '',
+  finish_date: '',
+  category: '',
+  description: ''
+};
 
+function Dashboard() {
+  const [campaigns, setCampaigns] = useContext(CampaignContext);
+  const [formValues, setFormValues] = useState(blankForm);
+  const [formErrors, setFormErrors] = useState(initialFormErrors);
+  const [edit, setEdit] = useState(blankForm);
+  const [editing, setEditing] = useState(false);
 
-export default function Login(){
-    const [formValues,setFormValues] = useState(blankLogin)
-    const [formErrors, setFormErrors] = useState(initialLoginErrors)
-    const [disabled, setDisabled] = useState(initialDisabled)
-    const history = useHistory();
-    
-    const formChange = (evt) => {
-    const { name, value } = evt.target;
-        yup
-        .reach(loginSchema, name)
-        .validate(value)
-        .then(valid => {
-          setFormErrors({
-            ...formErrors,
-            [name]: ""
-          });
-        })
-        .catch(err => {
-          setFormErrors({
-            ...formErrors,
-            [name]: err.errors[0]
-          });
-        })
-        
+  useEffect(() => {
+    getCampaigns();
+  }, []);
 
-        setFormValues({
-            ...formValues,
-            [name]:value
-        })
-    }
-
-    setFormValues({
-      ...formValues,
-      [name]: value
-    });
-  };
-
-  const postOrder = (register) => {
+  const getCampaigns = () => {
     axiosWithAuth()
-      .post('/api/auth/register', register)
+      .get(`/api/campaigns/`)
       .then((res) => {
-        console.log(res.data);
-        history.push('/Login');
+        setCampaigns(res.data['data']);
       })
       .catch((err) => {
-        console.log(err);
+        debugger;
+      });
+  };
+
+  const formChange = (evt) => {
+    const { name, value } = evt.target;
+
+    yup
+      .reach(formSchema, name)
+      .validate(value)
+      .then((valid) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: ''
+        });
+      })
+      .catch((err) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: err.errors[0]
+        });
+      });
+
+    editing
+      ? setEdit({
+          ...edit,
+          [name]: value
+        })
+      : setFormValues({
+          ...formValues,
+          [name]: value
+        });
+  };
+
+  const postCampaign = (campaign) => {
+    axiosWithAuth()
+      .post('/api/campaigns', campaign)
+      .then((res) => {
+        console.log(campaign);
+        setCampaigns([...campaigns, formValues]);
+      })
+      .catch((err) => {
+        debugger;
       })
       .finally(() => {
-        setFormValues(blankLogin);
+        setFormValues(blankForm);
       });
+  };
+
+  const editCampaign = (campaign) => {
+    setEditing(true);
+    setEdit(campaign);
+  };
+
+  const saveEdit = (e) => {
+    e.preventDefault();
+    axiosWithAuth()
+      .put(`/api/campaigns/${edit.id}`, edit)
+      .then((res) => {
+        setCampaigns(
+          campaigns.map((campaign) => {
+            if (campaign.id === res.data['data'].id) {
+              return res.data['data'];
+            } else {
+              return campaign;
+            }
+          })
+        );
+      });
+  };
+
+  const deleteCampaign = (notCampaigns) => {
+    console.log(campaigns);
+    axiosWithAuth()
+      .delete(`/api/campaigns/${notCampaigns.id}`)
+      .then((res) => {
+        setCampaigns(campaigns.filter((item) => notCampaigns.id !== item.id));
+      })
+      .catch((err) => console.log(err));
   };
 
   const onSubmit = (evt) => {
@@ -75,69 +134,45 @@ export default function Login(){
   };
 
   const submit = () => {
-    const newLogin = {
-      username: formValues.username.trim(),
-      password: formValues.password.trim()
+    const newCampaign = {
+      user_id: userId,
+      title: formValues.title.trim(),
+      monetary_goal: formValues.monetary_goal.trim(),
+      launch_date: formValues.launch_date.trim(),
+      finish_date: formValues.finish_date.trim(),
+      category: formValues.category.trim(),
+      description: formValues.description.trim()
     };
-    postOrder(newLogin);
+    postCampaign(newCampaign);
   };
 
-      useEffect(() => {
-        loginSchema.isValid(formValues)
-          .then(valid => {
-            setDisabled(!valid)
-            console.log('Looks Good')
-          })
-      }, [formValues])
+  return (
+    <div className='container'>
+      <Form
+        edit={edit}
+        editing={editing}
+        saveEdit={saveEdit}
+        values={formValues}
+        inputChange={formChange}
+        submit={onSubmit}
+        errors={formErrors}
+      />
 
-
-    return(
-        <div className="form">
-
-            <h2>Sign Up</h2>
-
-            <div className='errors'>
-                    <div>{formErrors.username}</div>
-                    <div>{formErrors.password}</div>
-                </div>
-            <form action=""
-            onSubmit={onSubmit}>
-              <div className='inputBox'>
-                <label htmlFor="username" className="input">Username:                </label>
-                      <input 
-                      type="text" 
-                      id="username"
-                      name='username'
-                      value={formValues.username}
-                      placeholder='Enter Username'
-                      onChange={formChange}
-                      />
-                
-              </div>
-              <div className='inputBox'>
-
-                <label htmlFor="password" className="password">Password:                </label>
-
-                    <input 
-                    type="password" 
-                    id="password"
-                    name='password'
-                    value={formValues.password}
-                    placeholder='Enter Password'
-                    onChange={formChange}
-                    />
-                </div>
-                <label className='submit'>
-                    <input
-                    type='submit'
-                    id='submitBtn'
-                    name='submitBtn'
-                    value='Register'
-                    disabled={disabled}
-                    />
-                </label>
-            </form>    
-
-        </div>
-    )
+      <div className='campaigns'>
+        <h2>Your Campaigns</h2>
+        {campaigns.map((campaign) => {
+          return (
+            <Campaigns
+              key={campaign.id}
+              details={campaign}
+              editCampaign={editCampaign}
+              deleteCampaign={deleteCampaign}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
 }
+
+export default Dashboard;
