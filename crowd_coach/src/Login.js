@@ -2,19 +2,47 @@ import React, {useState, useEffect} from 'react'
 import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom'
 import axios from 'axios'
 import Register from './Register'
+import * as yup from 'yup'
+import loginSchema from './valdation/loginSchema'
 
 const blankLogin = {
     username:'',
     password:''
 }
 
+const initialLoginErrors = {
+    username: '',
+    password:'',
+}
+
+const initialDisabled = true
+
 export default function Login(){
     const [formValues,setFormValues] = useState(blankLogin)
+    const [formErrors, setFormErrors] = useState(initialLoginErrors)
+    const [disabled, setDisabled] = useState(initialDisabled)
 
 
     const formChange = (evt) =>{
 
         const {name,value} = evt.target
+
+        yup
+        .reach(loginSchema, name)
+        .validate(value)
+        .then(valid => {
+          setFormErrors({
+            ...formErrors,
+            [name]: ""
+          });
+        })
+        .catch(err => {
+          setFormErrors({
+            ...formErrors,
+            [name]: err.errors[0]
+          });
+        })
+        
 
         setFormValues({
             ...formValues,
@@ -49,39 +77,59 @@ export default function Login(){
         postLogin(newLogin)
       }
 
+      useEffect(() => {
+        loginSchema.isValid(formValues)
+          .then(valid => {
+            setDisabled(!valid)
+            console.log('Looks Good')
+          })
+      }, [formValues])
+
 
     return(
         <Router className="form">
 
             <h2>Sign In</h2>
-            <form action=""
+            
+            <div className='errors'>
+                    <div>{formErrors.username}</div>
+                    <div>{formErrors.password}</div>
+                </div>
+                <form action=""
             onSubmit={onSubmit}>
-                <label htmlFor="" className="input">Username
-                    <input 
-                    type="text" 
-                    id="username"
-                    name='username'
-                    placeholder='Enter Username'
-                    value={formValues.username}
-                    onChange={formChange}
-                    />
-                </label>
-                <label htmlFor="" className="password">Password
+              <div className='inputBox'>
+                <label htmlFor="username" className="input">Username:                </label>
+                      <input 
+                      type="text" 
+                      id="username"
+                      name='username'
+                      value={formValues.username}
+                      placeholder='Enter Username'
+                      onChange={formChange}
+                      />
+                
+              </div>
+              <div className='inputBox'>
+
+                <label htmlFor="password" className="password">Password:                </label>
+
                     <input 
                     type="password" 
                     id="password"
                     name='password'
                     value={formValues.password}
+                    placeholder='Enter Password'
                     onChange={formChange}
                     />
-                </label>
+                </div>
                 <label className='submit'>
                     <input
                     onClick={submit}
                     type='submit'
                     id='submitBtn'
                     name='submitBtn'
-                    value='Login'
+                    value='Register'
+                    disabled={disabled}
                     />
                 </label>
             </form>    

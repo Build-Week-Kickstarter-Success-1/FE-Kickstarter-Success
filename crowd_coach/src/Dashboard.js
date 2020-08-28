@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import Form from './Form'
-import Header from './Header'
 import Campaigns from './Campaigns'
+import * as yup from 'yup'
+import formSchema from './valdation/formSchema'
 
 const blankForm = {
     title:'',
-    monetarty_goal:'',
+    monetary_goal:'',
     launch_date:'',
     finish_date:'',
     category:'',
@@ -17,9 +18,25 @@ const initialCampaigns = []
 
 const userId = ''
 
+const initialFormErrors = {
+    title: '',
+    monetary_goal:'',
+    launch_date:'',
+    finish_date:'',
+    category:'',
+    description:''
+}
+
+const initialDisabled = true
+
+
 function Dashboard({ details }) {
     const [campaigns, setCampaigns] = useState(initialCampaigns)
     const [formValues,setFormValues] = useState(blankForm)
+    const [formErrors, setFormErrors] = useState(initialFormErrors) 
+    const [disabled, setDisabled] = useState(initialDisabled)  
+
+
 
 
     const getCampaigns = (id) => {
@@ -37,11 +54,38 @@ function Dashboard({ details }) {
 
         const {name,value} = evt.target
 
+        yup
+        .reach(formSchema, name)
+        .validate(value)
+        .then(valid => {
+          setFormErrors({
+            ...formErrors,
+            [name]: ""
+          });
+        })
+        .catch(err => {
+          setFormErrors({
+            ...formErrors,
+            [name]: err.errors[0]
+          });
+        })
+          
+
+
         setFormValues({
             ...formValues,
             [name]:value
         })
     }
+
+    useEffect(() => {
+      formSchema.isValid(formValues)
+        .then(valid => {
+          setDisabled(!valid)
+          console.log('Looks Good')
+        })
+    }, [formValues])
+
 
     const postCampaign = campaign => {
 
@@ -64,8 +108,8 @@ function Dashboard({ details }) {
 
       const submit = () => {
         const newCampaign = {
-          title:formValues.name.trim(),
-          monetarty_goal: formValues.monetarty_goal.trim(),
+          title:formValues.title.trim(),
+          monetary_goal: formValues.monetary_goal.trim(),
           launch_date: formValues.launch_date.trim(),
           finish_date: formValues.finish_date.trim(),
           category: formValues.category.trim(),
@@ -86,8 +130,8 @@ function Dashboard({ details }) {
             values={formValues}
             inputChange={formChange}
             submit={onSubmit}
-            // disabled={disabled}
-            // errors={formErrors}
+            disabled={disabled}
+            errors={formErrors}
         />
 
         <div className='campaigns'>
