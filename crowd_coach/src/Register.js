@@ -1,61 +1,32 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { axiosWithAuth } from './utils/axiosWithAuth';
-import Form from './Form';
-import Campaigns from './Campaigns';
+import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
-import formSchema from './valdation/formSchema';
-import { CampaignContext } from './contexts/CampaignContext';
-import jwt_decode from 'jwt-decode';
+import loginSchema from './valdation/loginSchema';
 
-const token = localStorage.getItem('token');
-const userId = token ? jwt_decode(token).subject : null;
-
-const blankForm = {
-  user_id: userId,
-  title: '',
-  monetary_goal: '',
-  launch_date: '',
-  finish_date: '',
-  category: '',
-  description: ''
+const blankLogin = {
+  username: '',
+  password: ''
 };
 
-const initialFormErrors = {
-  title: '',
-  monetary_goal: '',
-  launch_date: '',
-  finish_date: '',
-  category: '',
-  description: ''
+const initialLoginErrors = {
+  username: '',
+  password: ''
 };
 
-function Dashboard() {
-  const [campaigns, setCampaigns] = useContext(CampaignContext);
-  const [formValues, setFormValues] = useState(blankForm);
-  const [formErrors, setFormErrors] = useState(initialFormErrors);
-  const [edit, setEdit] = useState(blankForm);
-  const [editing, setEditing] = useState(false);
+const initialDisabled = true;
 
-  useEffect(() => {
-    getCampaigns();
-  }, []);
-
-  const getCampaigns = () => {
-    axiosWithAuth()
-      .get(`/api/campaigns/`)
-      .then((res) => {
-        setCampaigns(res.data['data']);
-      })
-      .catch((err) => {
-        debugger;
-      });
-  };
+export default function Register() {
+  const [formValues, setFormValues] = useState(blankLogin);
+  const [formErrors, setFormErrors] = useState(initialLoginErrors);
+  const [disabled, setDisabled] = useState(initialDisabled);
+  const history = useHistory();
 
   const formChange = (evt) => {
     const { name, value } = evt.target;
 
     yup
-      .reach(formSchema, name)
+      .reach(loginSchema, name)
       .validate(value)
       .then((valid) => {
         setFormErrors({
@@ -70,62 +41,25 @@ function Dashboard() {
         });
       });
 
-    editing
-      ? setEdit({
-          ...edit,
-          [name]: value
-        })
-      : setFormValues({
-          ...formValues,
-          [name]: value
-        });
+    setFormValues({
+      ...formValues,
+      [name]: value
+    });
   };
 
-  const postCampaign = (campaign) => {
+  const postOrder = (register) => {
     axiosWithAuth()
-      .post('/api/campaigns', campaign)
+      .post('/api/auth/register', register)
       .then((res) => {
-        console.log(campaign);
-        setCampaigns([...campaigns, formValues]);
+        console.log(res.data);
+        history.push('/Login');
       })
       .catch((err) => {
-        debugger;
+        console.log(err);
       })
       .finally(() => {
-        setFormValues(blankForm);
+        setFormValues(blankLogin);
       });
-  };
-
-  const editCampaign = (campaign) => {
-    setEditing(true);
-    setEdit(campaign);
-  };
-
-  const saveEdit = (e) => {
-    e.preventDefault();
-    axiosWithAuth()
-      .put(`/api/campaigns/${edit.id}`, edit)
-      .then((res) => {
-        setCampaigns(
-          campaigns.map((campaign) => {
-            if (campaign.id === res.data['data'].id) {
-              return res.data['data'];
-            } else {
-              return campaign;
-            }
-          })
-        );
-      });
-  };
-
-  const deleteCampaign = (notCampaigns) => {
-    console.log(campaigns);
-    axiosWithAuth()
-      .delete(`/api/campaigns/${notCampaigns.id}`)
-      .then((res) => {
-        setCampaigns(campaigns.filter((item) => notCampaigns.id !== item.id));
-      })
-      .catch((err) => console.log(err));
   };
 
   const onSubmit = (evt) => {
@@ -134,45 +68,55 @@ function Dashboard() {
   };
 
   const submit = () => {
-    const newCampaign = {
-      user_id: userId,
-      title: formValues.title.trim(),
-      monetary_goal: formValues.monetary_goal.trim(),
-      launch_date: formValues.launch_date.trim(),
-      finish_date: formValues.finish_date.trim(),
-      category: formValues.category.trim(),
-      description: formValues.description.trim()
+    const newLogin = {
+      username: formValues.username.trim(),
+      password: formValues.password.trim()
     };
-    postCampaign(newCampaign);
+    postOrder(newLogin);
   };
 
-  return (
-    <div className='container'>
-      <Form
-        edit={edit}
-        editing={editing}
-        saveEdit={saveEdit}
-        values={formValues}
-        inputChange={formChange}
-        submit={onSubmit}
-        errors={formErrors}
-      />
+  useEffect(() => {
+    loginSchema.isValid(formValues).then((valid) => {
+      setDisabled(!valid);
+      console.log('Looks Good');
+    });
+  }, [formValues]);
 
-      <div className='campaigns'>
-        <h2>Your Campaigns</h2>
-        {campaigns.map((campaign) => {
-          return (
-            <Campaigns
-              key={campaign.id}
-              details={campaign}
-              editCampaign={editCampaign}
-              deleteCampaign={deleteCampaign}
-            />
-          );
-        })}
-      </div>
+  return (
+    <div className='form'>
+      <h2>Sign Up</h2>
+      <form action='' onSubmit={onSubmit}>
+        <label htmlFor='' className='input'>
+          Username
+          <input
+            type='text'
+            id='username'
+            name='username'
+            value={formValues.username}
+            placeholder='Select a Unique Username'
+            onChange={formChange}
+          />
+        </label>
+        <label htmlFor='' className='password'>
+          Password
+          <input
+            type='password'
+            id='password'
+            name='password'
+            value={formValues.password}
+            onChange={formChange}
+          />
+        </label>
+        <label className='submit'>
+          <input
+            onClick={submit}
+            type='submit'
+            id='submitBtn'
+            name='submitBtn'
+            value='Register'
+          />
+        </label>
+      </form>
     </div>
   );
 }
-
-export default Dashboard;
