@@ -1,23 +1,23 @@
 import React from 'react';
 
 export default function Form(props) {
-  const { values, inputChange, submit, edit, editing, saveEdit} = props;
+  const { values, inputChange, submit } = props;
 
   return (
     <section className='form'>
       <div className='title'>
-       <h1 className='title'>{editing ? 'Edit Campaign' : 'New Campaign'}</h1>
+        <h1 className='title'>New Campaign</h1>
         <h3 className='subtitle'>Enter The Campaign Info</h3>
       </div>
       <div className='form'>
-        <form action='' onSubmit={editing ? saveEdit : submit}>
+        <form action='' onSubmit={submit}>
           <label for=''>
             Campaign Titile
             <input
               type='text'
               id='title'
               name='title'
-              value={editing ? edit.title : values.title}
+              value={values.title}
               onChange={inputChange}
             />
           </label>
@@ -27,7 +27,7 @@ export default function Form(props) {
               type='number'
               id='monetary_goal'
               name='monetary_goal'
-              value={editing ? edit.monetary_goal : values.monetary_goal}
+              value={values.monetary_goal}
               onChange={inputChange}
             />
           </label>
@@ -38,7 +38,7 @@ export default function Form(props) {
               type='date'
               id='launch_date'
               name='launch_date'
-              value={editing ? edit.launch_date : values.launch_date}
+              value={values.launch_date}
               onChange={inputChange}
             />
           </label>
@@ -49,7 +49,7 @@ export default function Form(props) {
               type='date'
               id='finish_date'
               name='finish_date'
-              value={editing ? edit.finish_date : values.finish_date}
+              value={values.finish_date}
               onChange={inputChange}
             />
           </label>
@@ -59,7 +59,7 @@ export default function Form(props) {
             <select 
                         id='category'
                         name='category'
-                        value={editing ? edit.category : values.category}
+                        value={values.category}
                         onChange={inputChange}
                         >
                             <option value=''>Select a Category</option>
@@ -84,7 +84,7 @@ export default function Form(props) {
               type='text'
               id='description'
               name='description'
-              value={editing ? edit.description : values.description}
+              value={values.description}
               onChange={inputChange}
             />
           </label>
@@ -94,7 +94,7 @@ export default function Form(props) {
               type='submit'
               id='submitBtn'
               name='submitBtn'
-              value={editing ? 'Submit Edit' : 'Add Campaign'}
+              value='Submit Campaign'
             />
           </label>
         </form>
