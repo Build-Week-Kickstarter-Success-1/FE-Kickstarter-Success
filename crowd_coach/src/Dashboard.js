@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useContext } from 'react'
-import {axiosWithAuth} from './utils/axiosWithAuth'
-import Form from './Form'
-import Campaigns from './Campaigns'
-import * as yup from 'yup'
-import formSchema from './valdation/formSchema'
-import { CampaignContext } from './contexts/CampaignContext'
-import jwt_decode from 'jwt-decode'
+import React, { useState, useEffect, useContext } from 'react';
+import { axiosWithAuth } from './utils/axiosWithAuth';
+import Form from './Form';
+import Campaigns from './Campaigns';
+import * as yup from 'yup';
+import formSchema from './valdation/formSchema';
+import { CampaignContext } from './contexts/CampaignContext';
+import jwt_decode from 'jwt-decode';
 
-const token = localStorage.getItem('token')
-const userId = token ? jwt_decode(token).subject : null
+const token = localStorage.getItem('token');
+const userId = token ? jwt_decode(token).subject : null;
 
 const blankForm = {
   user_id: userId,
@@ -18,34 +18,31 @@ const blankForm = {
   finish_date: '',
   category: '',
   description: ''
-}
+};
 
 const initialFormErrors = {
-    title: '',
-    monetary_goal:'',
-    launch_date:'',
-    finish_date:'',
-    category:'',
-    description:''
-}
+  title: '',
+  monetary_goal: '',
+  launch_date: '',
+  finish_date: '',
+  category: '',
+  description: ''
+};
 
 function Dashboard() {
   const [campaigns, setCampaigns] = useContext(CampaignContext);
   const [formValues, setFormValues] = useState(blankForm);
-  const [formErrors, setFormErrors] = useState(initialFormErrors) 
-  const [disabled, setDisabled] = useState(initialDisabled)  
-  const [edit, setEdit] = useState(blankForm)
-  const [editing, setEditing] = useState(false)
+  const [formErrors, setFormErrors] = useState(initialFormErrors);
+  const [edit, setEdit] = useState(blankForm);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     getCampaigns();
-  }, [])
+  }, []);
 
-  const getCampaigns = (id) => {
+  const getCampaigns = () => {
     axiosWithAuth()
-      .get(
-        `/api/campaigns/`
-      )
+      .get(`/api/campaigns/`)
       .then((res) => {
         setCampaigns(res.data['data']);
       })
@@ -56,40 +53,33 @@ function Dashboard() {
 
   const formChange = (evt) => {
     const { name, value } = evt.target;
-    
-        yup
-        .reach(formSchema, name)
-        .validate(value)
-        .then(valid => {
-          setFormErrors({
-            ...formErrors,
-            [name]: ""
-          });
+
+    yup
+      .reach(formSchema, name)
+      .validate(value)
+      .then((valid) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: ''
+        });
+      })
+      .catch((err) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: err.errors[0]
+        });
+      });
+
+    editing
+      ? setEdit({
+          ...edit,
+          [name]: value
         })
-        .catch(err => {
-          setFormErrors({
-            ...formErrors,
-            [name]: err.errors[0]
-          });
-        })
-          
-    editing ? setEdit({
-      ...edit,
-      [name]: value
-    }): 
-    setFormValues({
-      ...formValues,
-      [name]: value
-    });
+      : setFormValues({
+          ...formValues,
+          [name]: value
+        });
   };
-  
-  useEffect(() => {
-      formSchema.isValid(formValues)
-        .then(valid => {
-          setDisabled(!valid)
-          console.log('Looks Good')
-        })
-    }, [formValues])
 
   const postCampaign = (campaign) => {
     axiosWithAuth()
@@ -107,37 +97,36 @@ function Dashboard() {
   };
 
   const editCampaign = (campaign) => {
-    setEditing(true)
-    setEdit(campaign)
-  }
+    setEditing(true);
+    setEdit(campaign);
+  };
 
   const saveEdit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     axiosWithAuth()
-    .put(`/api/campaigns/${edit.id}`, edit)
-    .then((res) => {
-      setCampaigns(campaigns.map(campaign => {
-        if(campaign.id === res.data['data'].id){
-          return(res.data['data'])
-        }
-        else{
-          return campaign
-        }
-      }))
-    })
-  }
+      .put(`/api/campaigns/${edit.id}`, edit)
+      .then((res) => {
+        setCampaigns(
+          campaigns.map((campaign) => {
+            if (campaign.id === res.data['data'].id) {
+              return res.data['data'];
+            } else {
+              return campaign;
+            }
+          })
+        );
+      });
+  };
 
   const deleteCampaign = (notCampaigns) => {
-    console.log(campaigns)
+    console.log(campaigns);
     axiosWithAuth()
-        .delete(`/api/campaigns/${notCampaigns.id}`)
-        .then((res) => {
-          setCampaigns(campaigns.filter((item) => 
-            notCampaigns.id !== item.id
-            ))
-        })
-        .catch((err) => console.log(err));
-  }
+      .delete(`/api/campaigns/${notCampaigns.id}`)
+      .then((res) => {
+        setCampaigns(campaigns.filter((item) => notCampaigns.id !== item.id));
+      })
+      .catch((err) => console.log(err));
+  };
 
   const onSubmit = (evt) => {
     evt.preventDefault();
@@ -166,19 +155,24 @@ function Dashboard() {
         values={formValues}
         inputChange={formChange}
         submit={onSubmit}
-        // disabled={disabled}
         errors={formErrors}
       />
 
       <div className='campaigns'>
         <h2>Your Campaigns</h2>
         {campaigns.map((campaign) => {
-          return <Campaigns key={campaign.id} details={campaign} editCampaign={editCampaign} deleteCampaign={deleteCampaign}/>;
+          return (
+            <Campaigns
+              key={campaign.id}
+              details={campaign}
+              editCampaign={editCampaign}
+              deleteCampaign={deleteCampaign}
+            />
+          );
         })}
       </div>
     </div>
   );
 }
 
-
-export default Dashboard
+export default Dashboard;
