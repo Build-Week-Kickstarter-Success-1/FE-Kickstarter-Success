@@ -1,157 +1,178 @@
-import React, {useState, useEffect} from 'react'
-import axios from 'axios'
-import Form from './Form'
-import Campaigns from './Campaigns'
-import * as yup from 'yup'
-import formSchema from './valdation/formSchema'
+import React, { useState, useEffect, useContext } from 'react';
+import { axiosWithAuth } from './utils/axiosWithAuth';
+import Form from './Form';
+import Campaigns from './Campaigns';
+import * as yup from 'yup';
+import formSchema from './valdation/formSchema';
+import { CampaignContext } from './contexts/CampaignContext';
+import jwt_decode from 'jwt-decode';
+
+const token = localStorage.getItem('token');
+const userId = token ? jwt_decode(token).subject : null;
 
 const blankForm = {
-    title:'',
-    monetary_goal:'',
-    launch_date:'',
-    finish_date:'',
-    category:'',
-    description:''
-}
-
-const initialCampaigns = []
-
-const userId = ''
+  user_id: userId,
+  title: '',
+  monetary_goal: '',
+  launch_date: '',
+  finish_date: '',
+  category: '',
+  description: ''
+};
 
 const initialFormErrors = {
-    title: '',
-    monetary_goal:'',
-    launch_date:'',
-    finish_date:'',
-    category:'',
-    description:''
-}
+  title: '',
+  monetary_goal: '',
+  launch_date: '',
+  finish_date: '',
+  category: '',
+  description: ''
+};
 
-const initialDisabled = true
+function Dashboard() {
+  const [campaigns, setCampaigns] = useContext(CampaignContext);
+  const [formValues, setFormValues] = useState(blankForm);
+  const [formErrors, setFormErrors] = useState(initialFormErrors);
+  const [edit, setEdit] = useState(blankForm);
+  const [editing, setEditing] = useState(false);
 
+  useEffect(() => {
+    getCampaigns();
+  }, []);
 
-function Dashboard({ details }) {
-    const [campaigns, setCampaigns] = useState(initialCampaigns)
-    const [formValues,setFormValues] = useState(blankForm)
-    const [formErrors, setFormErrors] = useState(initialFormErrors) 
-    const [disabled, setDisabled] = useState(initialDisabled)  
+  const getCampaigns = () => {
+    axiosWithAuth()
+      .get(`/api/campaigns/`)
+      .then((res) => {
+        setCampaigns(res.data['data']);
+      })
+      .catch((err) => {
+        debugger;
+      });
+  };
 
+  const formChange = (evt) => {
+    const { name, value } = evt.target;
 
+    yup
+      .reach(formSchema, name)
+      .validate(value)
+      .then((valid) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: ''
+        });
+      })
+      .catch((err) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: err.errors[0]
+        });
+      });
 
+    editing
+      ? setEdit({
+          ...edit,
+          [name]: value
+        })
+      : setFormValues({
+          ...formValues,
+          [name]: value
+        });
+  };
 
-    const getCampaigns = (id) => {
-        axios.get(`https://be-lambda-kickstarter-success.herokuapp.com/api/campaigns/${id}`)
-          .then(res => {
-            setCampaigns(res.data)
+  const postCampaign = (campaign) => {
+    axiosWithAuth()
+      .post('/api/campaigns', campaign)
+      .then((res) => {
+        console.log(campaign);
+        setCampaigns([...campaigns, formValues]);
+      })
+      .catch((err) => {
+        debugger;
+      })
+      .finally(() => {
+        setFormValues(blankForm);
+      });
+  };
+
+  const editCampaign = (campaign) => {
+    setEditing(true);
+    setEdit(campaign);
+  };
+
+  const saveEdit = (e) => {
+    e.preventDefault();
+    axiosWithAuth()
+      .put(`/api/campaigns/${edit.id}`, edit)
+      .then((res) => {
+        setCampaigns(
+          campaigns.map((campaign) => {
+            if (campaign.id === res.data['data'].id) {
+              return res.data['data'];
+            } else {
+              return campaign;
+            }
           })
-          .catch(err => {
-            debugger
-          })
-      }
-    
+        );
+      });
+  };
 
-    const formChange = (evt) =>{
+  const deleteCampaign = (notCampaigns) => {
+    console.log(campaigns);
+    axiosWithAuth()
+      .delete(`/api/campaigns/${notCampaigns.id}`)
+      .then((res) => {
+        setCampaigns(campaigns.filter((item) => notCampaigns.id !== item.id));
+      })
+      .catch((err) => console.log(err));
+  };
 
-        const {name,value} = evt.target
+  const onSubmit = (evt) => {
+    evt.preventDefault();
+    submit();
+  };
 
-        yup
-        .reach(formSchema, name)
-        .validate(value)
-        .then(valid => {
-          setFormErrors({
-            ...formErrors,
-            [name]: ""
-          });
-        })
-        .catch(err => {
-          setFormErrors({
-            ...formErrors,
-            [name]: err.errors[0]
-          });
-        })
-          
-
-
-        setFormValues({
-            ...formValues,
-            [name]:value
-        })
-    }
-
-    useEffect(() => {
-      formSchema.isValid(formValues)
-        .then(valid => {
-          setDisabled(!valid)
-          console.log('Looks Good')
-        })
-    }, [formValues])
-
-
-    const postCampaign = campaign => {
-
-        axios.post('https://be-lambda-kickstarter-success.herokuapp.com/api/', campaign)
-          .then(res => {
-            console.log(campaign)
-        })
-          .catch(err => {
-            debugger
-          })
-          .finally(() => {
-            setFormValues(blankForm)
-          })
-      }
-
-      const onSubmit = (evt) =>{
-          evt.preventDefault()
-          submit()
-      }
-
-      const submit = () => {
-        const newCampaign = {
-          title:formValues.title.trim(),
-          monetary_goal: formValues.monetary_goal.trim(),
-          launch_date: formValues.launch_date.trim(),
-          finish_date: formValues.finish_date.trim(),
-          category: formValues.category.trim(),
-          description: formValues.description.trim(),
-        }
-        postCampaign(newCampaign)
-      }
-
-      useEffect(() => {
-          getCampaigns(userId)
-      },[])
-
+  const submit = () => {
+    const newCampaign = {
+      user_id: userId,
+      title: formValues.title.trim(),
+      monetary_goal: formValues.monetary_goal.trim(),
+      launch_date: formValues.launch_date.trim(),
+      finish_date: formValues.finish_date.trim(),
+      category: formValues.category.trim(),
+      description: formValues.description.trim()
+    };
+    postCampaign(newCampaign);
+  };
 
   return (
     <div className='container'>
+      <Form
+        edit={edit}
+        editing={editing}
+        saveEdit={saveEdit}
+        values={formValues}
+        inputChange={formChange}
+        submit={onSubmit}
+        errors={formErrors}
+      />
 
-        <Form
-            values={formValues}
-            inputChange={formChange}
-            submit={onSubmit}
-            disabled={disabled}
-            errors={formErrors}
-        />
-
-        <div className='campaigns'>
-            <h2>Your Capmaigns</h2>
-            {
-                campaigns.map(campaign => {
-                return (
-                    <Campaigns key={campaign.id} details={campaign} />
-                )
-                })
-            }
-        </div>
-
-       
-
+      <div className='campaigns'>
+        <h2>Your Campaigns</h2>
+        {campaigns.map((campaign) => {
+          return (
+            <Campaigns
+              key={campaign.id}
+              details={campaign}
+              editCampaign={editCampaign}
+              deleteCampaign={deleteCampaign}
+            />
+          );
+        })}
+      </div>
     </div>
-
-    
-    
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
