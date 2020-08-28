@@ -2,24 +2,59 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { axiosWithAuth } from './utils/axiosWithAuth';
 import { useHistory } from 'react-router-dom';
+import * as yup from 'yup'
+import loginSchema from './valdation/loginSchema'
 
 const blankLogin = {
   username: '',
   password: ''
 };
 
+const initialLoginErrors = {
+    username: '',
+    password:'',
+}
+
+const initialDisabled = true
+
 export default function Login() {
   const [formValues, setFormValues] = useState(blankLogin);
+  const [formErrors, setFormErrors] = useState(initialLoginErrors)
+  const [disabled, setDisabled] = useState(initialDisabled)
   const history = useHistory();
 
   const formChange = (evt) => {
     const { name, value } = evt.target;
+    
+    yup
+        .reach(loginSchema, name)
+        .validate(value)
+        .then(valid => {
+          setFormErrors({
+            ...formErrors,
+            [name]: ""
+          });
+        })
+        .catch(err => {
+          setFormErrors({
+            ...formErrors,
+            [name]: err.errors[0]
+          });
+        })
 
     setFormValues({
       ...formValues,
       [name]: value
     });
   };
+  
+      useEffect(() => {
+        loginSchema.isValid(formValues)
+          .then(valid => {
+            setDisabled(!valid)
+            console.log('Looks Good')
+          })
+      }, [formValues])
 
   const postLogin = (login) => {
     axiosWithAuth()
@@ -52,6 +87,10 @@ export default function Login() {
   return (
     <div className='form'>
       <h2>Sign In</h2>
+       <div className='errors'>
+                    <div>{formErrors.username}</div>
+                    <div>{formErrors.password}</div>
+                </div>
       <form action='' onSubmit={onSubmit}>
         <label htmlFor='' className='input'>
           Username

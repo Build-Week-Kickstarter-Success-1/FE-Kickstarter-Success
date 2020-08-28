@@ -1,18 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { axiosWithAuth } from './utils/axiosWithAuth';
 import { useHistory } from 'react-router-dom';
+import * as yup from 'yup';
+import loginSchema from './valdation/loginSchema';
 
 const blankLogin = {
   username: '',
   password: ''
 };
 
-export default function Login() {
+const initialLoginErrors = {
+  username: '',
+  password: ''
+};
+
+const initialDisabled = true;
+
+export default function Register() {
   const [formValues, setFormValues] = useState(blankLogin);
+  const [formErrors, setFormErrors] = useState(initialLoginErrors);
+  const [disabled, setDisabled] = useState(initialDisabled);
   const history = useHistory();
 
   const formChange = (evt) => {
     const { name, value } = evt.target;
+
+    yup
+      .reach(loginSchema, name)
+      .validate(value)
+      .then((valid) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: ''
+        });
+      })
+      .catch((err) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: err.errors[0]
+        });
+      });
 
     setFormValues({
       ...formValues,
@@ -47,6 +74,13 @@ export default function Login() {
     };
     postOrder(newLogin);
   };
+
+  useEffect(() => {
+    loginSchema.isValid(formValues).then((valid) => {
+      setDisabled(!valid);
+      console.log('Looks Good');
+    });
+  }, [formValues]);
 
   return (
     <div className='form'>
